@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/png" sizes="16x16" href="../public/logo.png">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <title>Text Processing</title>
+</head>
+
+<body>
+    <script>
+        // setTimeout(() => {
+        //     const form = document.querySelector('form[name="upload-image"]')
+        //     const fileInput = document.querySelector('input[type="file"]')
+        //     const output = document.querySelector('#output')
+        //     const textarea = document.querySelector('textarea')
+
+        //     form.addEventListener('submit', e => {
+        //         e.preventDefault()
+
+        //         const formData = new FormData(form)
+
+        //         fetch('/upload', { method: 'POST', body: formData })
+        //             .then(res => res.text())
+        //             .then(text => {
+        //                 textarea.value = text
+        //             })
+        //             .catch(err => console.error(err))
+        //     })
+
+        // }, 200)
+
+        var loadFile = function (event) {
+            var image = document.getElementById('output')
+            document.getElementById('none').style.display = 'none'
+            image.src = URL.createObjectURL(event.target.files[0])
+
+        }
+        $(document).ready(function () {
+            $("form[name='upload-image']").on("submit", function (ev) {
+                $("#text").val('loading...')
+                ev.preventDefault()
+
+                var formData = new FormData(this)
+                // var formData = new FormData();
+                // formData.append('image', $('#file')[0].files[0])
+                $.ajax({
+                    url: "/upload-image",
+                    type: "POST",
+                    data: formData,
+                    success: res => {
+                        $("#warning").html('WARNING: No warning !')
+                        console.log(res)
+                        if (res.success)
+                            $("#text").val(res.message)
+                        else {
+                            $("#warning").html('WARNING: ' + res.message)
+                            $("#text").val('')
+                        }
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                })
+            })
+            $("form[name='upload-text']").on("submit", function (ev) {
+                $("#keywords").val('loading...')
+                ev.preventDefault()
+                var text = $("#text").val()
+                var lang = $("#lang_key").val()
+                $.ajax({
+                    url: "/upload-text",
+                    type: "POST",
+                    data: { lang: lang, text: text },
+                    success: res => {
+                        if (res.success) {
+                            $("#warning").html('WARNING: No warning!')
+                            var s = "";
+                            if (res.message.length == 0) s = 'No keywords founded!'
+                            for (let i = 0; i < res.message.length; i++) {
+                                s += (i + 1 + ". " + res.message[i].keyword + "\n")
+                            }
+                            $("#keywords").val(s)
+                        }
+                        else {
+                            $("#warning").html('WARNING: ' + res.message)
+                            $("#keywords").val('')
+                        }
+                    }
+                })
+            })
+        })
+
+    </script>
+    <style>
+        body {
+            background-color: #220b59;
+            background-image: linear-gradient(180deg, #352732 0%, #0f0636 50%, #4f2903 100%);
+            font-family: dosis;
+        }
+
+        #upload {
+            background-color: blanchedalmond;
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 5px;
+            margin-left: 8px;
+        }
+
+        #extract-text,
+        #extract-keywords {
+            margin-left: 8px;
+            background-color: rgb(177, 255, 110);
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all .5s ease;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 50% 15% 34%;
+        }
+
+        .grid-container-1 {
+            display: grid;
+            grid-template-columns: 30% 60%;
+        }
+
+        button {
+            border: none;
+            outline: none;
+        }
+
+        #upload:hover,
+        #extract-text:hover,
+        #extract-keywords:hover {
+            box-shadow: rgba(236, 13, 228, 0.35) 0px 5px 15px;
+            background-color: #7e7e7e;
+            color: rgb(177, 255, 110);
+        }
+
+        .select {
+            background-color: white;
+            border: 2px solid rgb(89, 166, 255);
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .option {
+
+            border: none;
+            background-color: white;
+            outline: none;
+            color: red;
+        }
+
+        .area {
+
+            width: 90%;
+            height: 450px;
+            background-color: rgba(255, 255, 255, 0.281);
+            padding: 5px;
+        }
+
+        input[type="text"] {
+            font-family: dosis;
+            width: 94%;
+            font-size: 16px;
+            border-radius: 8px;
+            background-color: whitesmoke;
+            height: 30px;
+        }
+
+        input[type="submit"] {
+            font-family: dosis;
+            color: white;
+            background-color: #4285F4;
+            border: #0f0636;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 5%;
+            height: 30px;
+        }
+
+        form {
+            margin-bottom: 5px;
+        }
+
+        footer {
+            background-color: #880202;
+            text-align: center;
+            color: rgb(238, 238, 238);
+            border-radius: 8px;
+            padding: 1px;
+        }  
+
+        a {
+            color: rgb(255, 255, 255);
+        }
+
+    </style>
+    <div style="display: flex;">
+        <label for="file" style="cursor: pointer;" id="upload">Upload Image</label>
+        <i class="fa-solid fa-arrow-right"></i>
+    </div>
+    <span style="color: rgb(252, 24, 24); position:absolute; top: 5%; left: 48%;" id="warning">WARNING: No
+        warning !</span>
+    <div
+        style="background-color: rgba(255, 255, 255, 0.684); display: flex; border: 2px solid #ccc; border-radius: 10px; margin: 5px; padding: 5px;">
+        <form style="width: 70%; " name="upload-image" action="/upload-image" method="POST"
+            enctype="multipart/form-data">
+            <div style="width: 100%;">
+                <input type="file" name="image" id="file" onchange="loadFile(event)" style="display: none;">
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <img id="output" width="100%" />
+                        <img src="../public/none.jpg" width="98%" height="93%" id="none" />
+                    </div>
+                    <div class="grid-item" style="border-left: 2px solid #ccc;">
+                        <button id="extract-text" type="submit">Extract Text</button>
+                        <br />
+                        <div class="select">
+                            <label for="lang" style="color: rgb(89, 166, 255);">Language:</label>
+
+                            <select name="lang" id="lang" class="option">
+                                <option value="eng" selected>English</option>
+                                <option value="vie">Vietnamese</option>
+                                <option value="zho">Chinese</option>
+                                <option value="ara">Arabic</option>
+                                <option value="rus">Russian</option>
+                                <option value="deu">German</option>
+                                <option value="fra">French</option>
+                                <option value="spa">Spanish</option>
+                                <option value="por">Portuguese</option>
+                                <option value="jpn">Japanese</option>
+                                <option value="kor">Korean</option>
+                                <option value="ita">Italian</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-item">
+                        <p style="color: rgb(214, 129, 0); padding: 5px; "><b>OUTPUT TEXT:</b></p>
+                        <textarea id="text" class="area"></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form style="width: 30%; border-left: 2px solid #ccc;" name="upload-text" action="/upload-text" method="POST">
+            <div style="width: 100%; ">
+                <div class="grid-container-1">
+                    <div class="grid-item">
+                        <button id="extract-keywords" type="submit">Keywords</button>
+                        <br />
+                        <div class="select">
+                            <label for="lang" style="color: rgb(89, 166, 255);">Language:</label>
+
+                            <select name="lang" id="lang_key" class="option">
+                                <option value="en" selected>English</option>
+                                <option value="vi">Vietnamese</option>
+                                <option value="zh">Chinese</option>
+                                <option value="ar">Arabic</option>
+                                <option value="ru">Russian</option>
+                                <option value="de">German</option>
+                                <option value="fr">French</option>
+                                <option value="sp">Spanish</option>
+                                <option value="po">Portuguese</option>
+                                <option value="jp">Japanese</option>
+                                <option value="ko">Korean</option>
+                                <option value="it">Italian</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-item">
+                        <p style="color: rgb(214, 129, 0); padding: 5px;"><b>OUTPUT KEYWORDS:</b></p>
+                        <textarea id="keywords" class="area"></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <form action="https://www.google.com/search" method="get" target="_blank">
+        <input type="text" name="q" placeholder="Search Google">
+        <input type="submit" value="Go">
+    </form>
+
+    <form action="https://www.bing.com/search" method="get" target="_blank">
+        <input type="text" name="q" placeholder="Search Bing">
+        <input type="submit" value="Go">
+    </form>
+
+    <script>
+        document.addEventListener("click", function() {
+            document.body.style.caretColor = "transparent";
+        });
+    </script>
+      
+</body>
+
+<footer>
+    <p>© Copyright 2023<br><a href="https://github.com/Kant2510" target="_blank">Kant2510</a></p> 
+</footer>
+
+</html>
