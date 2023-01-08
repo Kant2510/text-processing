@@ -6,7 +6,7 @@
 > https://app.edenai.run/user/login?referral=best-keyword-extraction-apis
 
 # How to use
-> ***Make sure you have nodejs on your computer***
+> ***Make sure you have nodejs on your computer*** <br />
 > ***Go here to download [NodeJs](https://nodejs.org/en/)***
 + Step 1: Open Terminal
 + Step 2: Run `npm i`
