@@ -1,5 +1,5 @@
-const Tesseract = require('tesseract.js')
 const path = require('path')
+const { recognition } = require('../Models/index.js')
 
 const upImg = async (req, res) => {
 
@@ -14,20 +14,8 @@ const upImg = async (req, res) => {
     const filePath = path.join(__dirname, '../public', image.name)
 
     image.mv(filePath)
-        .then((success) => {
-            console.log(success)
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-    Tesseract.recognize(filePath, req.body.lang, {})
-        .then(({ data: { text } }) => {
-            console.log(text)
-            res.send({ success: true, message: text })
-        })
-        .catch((err) => {
-            return res.send(err)
-        })
+
+    res.send(await recognition(req, filePath))
 }
 
 module.exports = upImg
