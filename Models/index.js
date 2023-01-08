@@ -8,7 +8,7 @@ const extract = async req => {
         url: 'https://api.edenai.run/v2/text/keyword_extraction',
         headers: {
             authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMWZiZmI3ZjYtZDBkMy00Y2U4LWJhNmQtNDQ2MDI4ZmNhMTIyIiwidHlwZSI6ImFwaV90b2tlbiJ9.i_e2nq604DUgpeDcqR_fm2qHHp6YDvhlAB8wJY7tP2E',
+                'Bearer <YOUR EDEN AI API KEY>',
         },
         data: {
             providers: 'microsoft, amazon',
